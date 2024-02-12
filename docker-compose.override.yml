@@ -1,0 +1,35 @@
+services:
+  php:
+    build:
+      context: .
+      target: frankenphp_dev
+      dockerfile: docker/Dockerfile
+    volumes:
+      - ./:/app
+      - ./docker/frankenphp/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./docker/frankenphp/conf.d/app.dev.ini:/usr/local/etc/php/conf.d/app.dev.ini:ro
+      # If you develop on Mac or Windows you can remove the vendor/ directory
+      #  from the bind-mount for better performance by enabling the next line:
+      #- /app/vendor
+    environment:
+      # See https://xdebug.org/docs/all_settings#mode
+      XDEBUG_MODE: "${XDEBUG_MODE:-off}"
+      XDEBUG_CONFIG: '${XDEBUG_CONFIG:-client_host=host.docker.internal}'
+    extra_hosts:
+      # Ensure that host.docker.internal is correctly defined on Linux
+      - host.docker.internal:host-gateway
+    tty: true
+    # networks:
+    #   - traefik
+    # labels:
+    #   - "traefik.enable=true"
+    #   - "traefik.http.routers.my-city-app.rule=Host(`${PROJECT_NAME}.traefik.docker`)"
+    #   - "traefik.http.routers.my-city-app.entrypoints=web-secure"
+    #   - "traefik.http.routers.my-city-app.tls=true"
+    #   - "traefik.http.services.my-city-app.loadbalancer.server.port=80"
+
+networks:
+  my_city:
+  # traefik:
+  #   external: true
+  #   name: traefik
