@@ -1,6 +1,6 @@
 
 
-<div class = "group fixed bottom-4 right-2 pb-2  flex items-end justify-center w-24 h-96  ">
+<div class = "group fixed bottom-4 right-2 pb-2  flex items-end justify-center w-24 hover:h-96  ">
     <!-- main -->
     <div class = "cursor-pointer text-white shadow-xl flex items-center justify-center p-3 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 z-50 absolute  ">
         <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 group-hover:rotate-90 transition  transition-all duration-[0.6s]" xmlns="http://www.w3.org/2000/svg">
@@ -27,3 +27,4 @@
         </svg>
     </div>
 </div>
+

@@ -3,10 +3,14 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Group;
+use App\Models\Linkage;
+use App\Models\Picture;
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
@@ -21,6 +25,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'client_id',
+        'role',
+        'is_admin'
     ];
 
     /**
@@ -42,4 +49,49 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function client()
+    {
+        return $this->belongsTo(Client::class);
+    }
+
+    public function picture(): MorphOne
+    {
+        return $this->morphOne(Picture::class, 'imageable');
+    }
+
+    public function groups()
+    {
+        if($this->is_admin)
+        {
+            return $this->hasMany(Group::class, 'client_id', 'client_id');
+        }else{
+            return $this->hasManyThrough(Group::class, Linkage::class, 'user_id', 'id','id', 'groupable_id')->where('groups.client_id', $this->client_id);
+        }
+    }
+
+    public function linkages()
+    {
+        return $this->hasMany(Linkage::class, 'user_id');
+    }
+
+    public function is_admin()
+    {
+        return $this->admin;
+    }
+
+    public function is_manager()
+    {
+        return $this->user_profil() != (Linkage::STATUS_USER || Linkage::STATUS_REDACTOR);
+    }
+
+    public function user_profil()
+    {
+        if($this->admin){
+            return $this->admin;
+        }
+        else{
+            return $this->linkages()->first()->management_type;
+        }
+    }
 }

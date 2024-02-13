@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CreateGroupRequest;
+use App\Models\Group;
 use Illuminate\Http\Request;
 use App\Services\GroupService;
+use Illuminate\Support\Facades\DB;
 use App\Services\PhotoUploadService;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\CreateGroupRequest;
 
 class GroupController extends Controller
 {
@@ -21,7 +25,9 @@ class GroupController extends Controller
      */
     public function index()
     {
-        return view('group.index');
+        $this->authorize('viewAny', Group::class);
+        $groups = Auth::user()->groups;
+        return view('group.index', ['groups'=> $groups]);
     }
 
     /**
@@ -29,7 +35,9 @@ class GroupController extends Controller
      */
     public function create()
     {
-        return view('group.create');
+        $this->authorize('create', Group::class);
+        $users = Auth::user()->client->users;
+        return view('group.create', compact('users'));
     }
 
     /**
@@ -39,7 +47,7 @@ class GroupController extends Controller
     {
         try {
             $this->groupService->createGroup($request);
-            return redirect()->route('groups.create')->with('success', 'Le diffuser à bien été créé');
+            return redirect()->route('groups.index')->with('success', 'Le diffuseur à bien été créé');
         } catch (\Exception $e) {
             return redirect()->route('groups.create')->with('error', $e->getMessage());
         }
@@ -56,17 +64,25 @@ class GroupController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Group $group)
     {
-        //
+        $this->authorize('update', $group);
+        $users = Auth::user()->client->users;
+        return view('group.edit', ['group'=>$group, 'users' => $users]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(CreateGroupRequest $request, Group $group)
     {
-        //
+        $this->authorize('update', $group);
+        try {
+            $this->groupService->updateGroup($group, $request);
+            return redirect()->route('groups.index')->with('success', 'Le diffuseur à bien été créé');
+        } catch (\Exception $e) {
+            return redirect()->route('groups.edit', $group)->with('error', $e->getMessage());
+        }
     }
 
     /**
@@ -74,6 +90,15 @@ class GroupController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $group = Group::find($id);
+        $this->authorize('delete', $group);
+
+        if($group->picture){
+            $newPath = str_replace('storage', 'public', $group->picture->url);
+            Storage::delete($newPath);
+            $group->picture->delete();
+        }
+        $group->delete();
+        return redirect()->route('groups.index')->with('success', 'Channel supprimé avec succès.');
     }
 }

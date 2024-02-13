@@ -25,8 +25,8 @@ class CreateGroupRequest extends FormRequest
             'name' => 'required|string|max:255',
             'activity' => 'required|string|max:255  ',
             'description' => 'nullable|string',
-            'client_id' => 'required',
-            'group_avatar' => 'nullable',
+            'group_avatar' => 'nullable|image',
+            'group_managers' => 'nullable|array',
         ];
     }
 

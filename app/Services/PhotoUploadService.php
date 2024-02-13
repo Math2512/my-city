@@ -3,8 +3,8 @@
 namespace App\Services;
 
 use App\Models\Picture;
+use Illuminate\Http\File;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
 class PhotoUploadService
@@ -15,23 +15,29 @@ class PhotoUploadService
      * @param UploadedFile $file
      * @param mixed $entity
      */
-    public function upload($file, $entity)
+    public function upload($file, $entity, $path)
     {
         try {
-            $path = $this->storeFile($file, $entity);
+            if ($file) {
+                $this->deleteExistingFile($entity->picture); // Supprimez l'ancien fichier s'il existe
+                $path = $this->storeFile($file, $entity, $path);
 
-            $picture = new Picture([
-                'url' => $path,
-                'imageable_id' => $entity->id,
-                'imageable_type' => get_class($entity),
-            ]);
+                // Mettez à jour l'enregistrement de l'image existante
+                if ($entity->picture) {
+                    $entity->picture->update(['url' => $path]);
+                } else {
+                    // Créez un nouvel enregistrement s'il n'existe pas
+                    $picture = new Picture([
+                        'url' => $path,
+                        'imageable_id' => $entity->id,
+                        'imageable_type' => get_class($entity),
+                    ]);
+                    $entity->picture()->save($picture);
+                }
 
-            $entity->picture()->save($picture);
-
-            return $picture;
+                return $path;
+            }
         } catch (\Exception $e) {
-            // Handle the exception, log, and return null or throw it again as per your needs
-            dd($e);
             return null;
         }
     }
@@ -41,26 +47,31 @@ class PhotoUploadService
      *
      * @return string|null
      */
-    private function storeFile($file, $entity): ?string
+    private function storeFile($file, $entity, $path)
     {
         try {
-            $ancienChemin = $file;
-            $nomFichier = basename($ancienChemin);
-            $dossierDestination = storage_path('group/avatar/');
-            File::makeDirectory($dossierDestination, 0777, true, true);
-            // Utilisez pathinfo pour obtenir des informations sur le fichier, y compris l'extension
-            $infoFichier = pathinfo($ancienChemin);
-
-            // Obtenez l'extension du fichier
-            $extensionFichier = $infoFichier['extension'];
-
-            // Stockez le fichier avec le nouveau nom dans le dossier de destination
-            Storage::putFileAs($dossierDestination, $ancienChemin, $nomFichier);
-            dd($dossierDestination.$nomFichier);
-            return $dossierDestination.$nomFichier.$extensionFichier;
+            if ($file) {
+                $imageName = $file->getClientOriginalName(); // Vous pouvez personnaliser le nom du fichier si nécessaire
+                $file->storeAs('public/' . $path.$entity->id, $imageName);
+                return 'storage/' . $path.$entity->id.'/'.$imageName;
+            }
         } catch (\Exception $e) {
-            dd('eeee'.$e);
-            // Handle the exception, log, and return null or throw it again as per your needs
+            return null;
+        }
+    }
+
+    /**
+     * Delete old File.
+     *
+     * @param Picture|null $picture
+     */
+    private function deleteExistingFile($picture)
+    {
+        try {
+            if ($picture) {
+                Storage::delete(str_replace('storage/', '', $picture->url));
+            }
+        } catch (\Exception $e) {
             return null;
         }
     }

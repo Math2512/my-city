@@ -3,7 +3,7 @@
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\UploadController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,7 +22,6 @@ Route::get('/', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::post('/upload', [UploadController::class, 'store']);
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -30,6 +29,7 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('articles', PostController::class);
     Route::resource('groups', GroupController::class);
+    Route::resource('users', UserController::class);
 });
 
 require __DIR__.'/auth.php';
