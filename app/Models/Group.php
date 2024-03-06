@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Tag;
 use App\Models\Linkage;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -33,5 +34,9 @@ class Group extends Model
     public function linkages()
     {
         return $this->hasMany(Linkage::class, 'groupable_id');
+    }
+    public function tags()
+    {
+        return $this->hasMany(Tag::class);
     }
 }

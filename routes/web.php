@@ -1,10 +1,13 @@
 <?php
 
-use App\Http\Controllers\GroupController;
-use App\Http\Controllers\PostController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\GroupController;
+use App\Http\Controllers\ClientController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ActivateController;
+use App\Http\Controllers\SurveyController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,8 +20,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
+
+Route::get('/activate/{token}', [ActivateController::class, 'activate'])->name('activate');
+Route::put('password-activate', [ActivateController::class, 'password_activate'])->name('password-activate');
+
 Route::get('/', function () {
-    return view('dashboard');
+    return view('dashboard'); //vérifié si emailverifiedat est rempli
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -28,8 +36,16 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::resource('articles', PostController::class);
+    Route::post('articles/create_with_group', [PostController::class, 'create_with_group'])->name('articles.create_with_group');
+
+    Route::resource('sondages', SurveyController::class);
+
     Route::resource('groups', GroupController::class);
     Route::resource('users', UserController::class);
+    Route::resource('client', ClientController::class);
+
+
 });
+
 
 require __DIR__.'/auth.php';

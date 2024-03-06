@@ -36,7 +36,7 @@ class GroupController extends Controller
     public function create()
     {
         $this->authorize('create', Group::class);
-        $users = Auth::user()->client->users;
+        $users = Auth::user()->client->users->where('is_admin', false);
         return view('group.create', compact('users'));
     }
 
@@ -67,7 +67,7 @@ class GroupController extends Controller
     public function edit(Group $group)
     {
         $this->authorize('update', $group);
-        $users = Auth::user()->client->users;
+        $users = Auth::user()->client->users->where('is_admin', false);
         return view('group.edit', ['group'=>$group, 'users' => $users]);
     }
 

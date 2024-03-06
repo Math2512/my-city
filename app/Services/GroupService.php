@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Tag;
 use App\Models\User;
 use App\Models\Group;
 use Illuminate\Support\Facades\DB;
@@ -41,6 +42,14 @@ class GroupService
             // Upload group_avatar
             $photo = $this->photoUploadService->upload($request->file('group_avatar'), $group, 'group/');
 
+
+            if (!empty($data['tags'])) {
+                foreach ($data['tags'] as $tagName) {
+                    $tag = Tag::firstOrCreate(['name' => $tagName]);
+                    $group->tags()->save($tag);
+                }
+            }
+
             DB::commit();
             return $group;
         } catch (QueryException $e) {
@@ -51,8 +60,8 @@ class GroupService
     public function updateGroup(Group $group, CreateGroupRequest $request)
     {
         try {
+        
             $data = $request->validated();
-
             DB::beginTransaction();
             // Mettre à jour les propriétés du groupe
             $group->update($data);
@@ -67,10 +76,25 @@ class GroupService
             }
             $this->userGroupService->syncUsersWithGroup($group, $data['group_managers'], $management_type);
 
-            // Mettre à jour group_avatar si nécessaire
             if ($request->hasFile('group_avatar')) {
                 $photo = $this->photoUploadService->upload($request->file('group_avatar'), $group, 'group/');
             }
+
+            $newTagIds = [];
+            if (!empty($data['tags'])) {
+                $tags = [];
+                foreach ($data['tags'] as $tagName) {
+                    $tag = Tag::firstOrCreate(['name' => $tagName]);
+                    if (!$group->tags->contains($tag)) {
+                        $group->tags()->save($tag);
+                    }
+                    $tags[] = $tag;
+                }
+                $newTagIds = collect($tags)->pluck('id')->toArray();
+            }
+
+            $group->tags()->whereNotIn('id', $newTagIds)->delete();
+
 
             DB::commit();
             return $group;

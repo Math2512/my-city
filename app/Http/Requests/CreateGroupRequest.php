@@ -27,6 +27,7 @@ class CreateGroupRequest extends FormRequest
             'description' => 'nullable|string',
             'group_avatar' => 'nullable|image',
             'group_managers' => 'nullable|array',
+            'tags' => 'nullable|array',
         ];
     }
 

@@ -63,7 +63,12 @@
     </div>
     @if (isset($groups))
         <div class="mb-5">
-            @livewire('select2-dropdown-groups', ['groups'=>$groups])
+            <label for="user_groups" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Selectionner un ou plusieurs channel dont l'utilisateursera responsable <!-- <a href="#" data-modal-target="myModal" data-modal-show="myModal" class="text-blue-600 hover:underline dark:text-blue-500">Ajouter des utilisateurs</a>--></label>
+            <select name="user_groups[]" id="choices" class="rounded-lg" multiple>
+                @foreach ($groups as $group)
+                    <option value="{{ $group->id }}">{{ $group->name }}</option>
+                @endforeach
+            </select>
         </div>
     @endif
     <button type="submit"

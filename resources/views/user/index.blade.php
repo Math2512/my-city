@@ -9,35 +9,36 @@
 
     <div x-data="{ isOpen: false, userData: { id: '', name: '' } }">
     <div class="py-8">
-        <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-4">
-            <div
-                class="flex items-center justify-between flex-column md:flex-row flex-wrap space-y-4 md:space-y-0 py-4 bg-white dark:bg-gray-900">
+        <div
+            class="flex items-center justify-between flex-column md:flex-row flex-wrap space-y-4 md:space-y-0 py-4">
 
-                @can('create', App\Models\User::class)
-                    <a href="{{route('users.create')}}"
-                        class="px-5 py-2.5 text-sm font-medium text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                        <svg class="w-4 h-4 text-white me-2" stroke-width="1.5" stroke="currentColor" aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M5 12H19" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                            <path d="M12 19L12 5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                        Ajouter un Utilisateur
-                    </a>
-                @endcan
-                <label for="table-search" class="sr-only">Search</label>
-                <div class="relative">
-                    <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
-                        <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-                        </svg>
-                    </div>
-                    <input type="text" id="table-search-users"
-                        class="block pt-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder="Search for users">
+            @can('create', App\Models\User::class)
+                <a href="{{route('users.create')}}"
+                    class="px-5 py-2.5 text-sm font-medium text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                    <svg class="w-4 h-4 text-white me-2" stroke-width="1.5" stroke="currentColor" aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M5 12H19" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M12 19L12 5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Ajouter un Utilisateur
+                </a>
+            @endcan
+            <label for="table-search" class="sr-only">Search</label>
+            <div class="relative">
+                <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                    </svg>
                 </div>
+                <input type="text" id="table-search-users"
+                    class="block pt-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="Search for users">
             </div>
+        </div>
+        <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-4">
+
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
@@ -86,7 +87,7 @@
                                 @endforeach
                             </td>
                             @if (auth()->user()->is_manager())
-                                <td class="px-6 py-4 flex justify-end space-x-2">
+                                <td class="px-6 flex justify-end space-x-2 items-center">
                                     <!-- Modal toggle -->
                                     @can('update', $user)
                                         <a href="{{route('users.edit', $user)}}" type="button"

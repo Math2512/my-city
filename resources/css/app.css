@@ -1,10 +1,7 @@
+@import './choices.css';
+@import "quill/dist/quill.core.css";
+@import  '../../node_modules/quill/dist/quill.snow.css';
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-.filepond--drop-label {
-    color: #FFF !important;
-}
-.filepond--panel-root {
-    background-color: rgb(55 65 81 / var(--tw-bg-opacity)) !important;
-}

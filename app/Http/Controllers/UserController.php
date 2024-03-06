@@ -11,6 +11,7 @@ use App\Services\PhotoUploadService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Events\Registered;
+use App\Services\ActivationLinkService;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\CreateUserRequest;
 use App\Http\Requests\UpdateUserRequest;
@@ -19,11 +20,13 @@ class UserController extends Controller
 {
     protected $photoUploadService;
     protected $userGroupService;
+    protected $activationLinkService;
 
-    public function __construct(PhotoUploadService $photoUploadService, UserGroupService $userGroupService)
+    public function __construct(PhotoUploadService $photoUploadService, UserGroupService $userGroupService, ActivationLinkService $activationLinkService)
     {
         $this->photoUploadService = $photoUploadService;
         $this->userGroupService = $userGroupService;
+        $this->activationLinkService = $activationLinkService;
     }
 
     /**
@@ -84,6 +87,8 @@ class UserController extends Controller
 
             $this->photoUploadService->upload($request->file('user_avatar'), $user, 'users/');
             DB::commit();
+
+            $this->activationLinkService->sendActivationEmail($user);
             return redirect()->route('users.index')->with('success', 'L\'utilisateur à bien été créé');
         } catch (\Exception $e) {
             return redirect()->route('users.create')->with('error', $e->getMessage());

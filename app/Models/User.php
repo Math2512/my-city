@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Post;
 use App\Models\Group;
 use App\Models\Linkage;
 use App\Models\Picture;
@@ -27,7 +28,8 @@ class User extends Authenticatable
         'password',
         'client_id',
         'role',
-        'is_admin'
+        'is_admin',
+        'email_verified_at'
     ];
 
     /**
@@ -75,23 +77,31 @@ class User extends Authenticatable
         return $this->hasMany(Linkage::class, 'user_id');
     }
 
+    public function posts()
+    {
+        return $this->hasMany(Post::class, 'author_id');
+    }
+
     public function is_admin()
     {
-        return $this->admin;
+        return $this->is_admin;
     }
 
     public function is_manager()
     {
-        return $this->user_profil() != (Linkage::STATUS_USER || Linkage::STATUS_REDACTOR);
+        return $this->user_profil() != Linkage::STATUS_USER || Linkage::STATUS_REDACTOR;
     }
 
     public function user_profil()
     {
-        if($this->admin){
+        if($this->is_admin()){
             return $this->admin;
         }
-        else{
+        elseif($this->linkages()->count() > 0){
             return $this->linkages()->first()->management_type;
+        }
+        else{
+            return;
         }
     }
 }

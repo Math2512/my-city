@@ -72,7 +72,12 @@
                             @enderror
                         </div>
                         <div class="mb-5">
-                            @livewire('select2-dropdown-users', ['users' => $users])
+                            <label for="group_managers" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Selectionner un ou plusieurs responsables de cette diffusion <!--<a href="#" data-modal-target="myModal" data-modal-show="myModal" class="text-blue-600 hover:underline dark:text-blue-500">Ajouter des utilisateurs</a>--></label>
+                            <select name="group_managers[]" id="choices" class="rounded-lg" multiple>
+                                @foreach ($users as $user)
+                                    <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                @endforeach
+                            </select>
                         </div>
                         <div class="mb-5">
                             <label for="status"
@@ -84,6 +89,9 @@
                                     <span x-text="isChecked ? 'Actif' : 'Inactif'" class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300"></span>
                                 </label>
                             </div>
+                        </div>
+                        <div class="mb-5">
+                            <livewire:tag-manager :groupId="null"/>
                         </div>
                         <button type="submit"
                             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Valider

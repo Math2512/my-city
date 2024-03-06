@@ -51,7 +51,7 @@ class PhotoUploadService
     {
         try {
             if ($file) {
-                $imageName = $file->getClientOriginalName(); // Vous pouvez personnaliser le nom du fichier si nécessaire
+                $imageName = $file->getClientOriginalName();
                 $file->storeAs('public/' . $path.$entity->id, $imageName);
                 return 'storage/' . $path.$entity->id.'/'.$imageName;
             }

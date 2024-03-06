@@ -38,7 +38,7 @@ class GroupPolicy
      */
     public function update(User $user, Group $group): bool
     {
-        return ($user->is_admin || $user->user_profil() == Linkage::STATUS_MANAGER) && $user->groups->contains($group->id) ;
+        return ($user->is_admin || ($user->user_profil() == Linkage::STATUS_MANAGER && $user->groups->contains($group->id))) ;
     }
 
     /**

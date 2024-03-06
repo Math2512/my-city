@@ -10,12 +10,14 @@
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         @livewireStyles
+
+
     </head>
-    <body class="font-sans antialiased">
+    </head>
+    <body class="antialiased font-montserrat">
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
             @include('layouts.nav.navigation')
             @include('layouts.nav.aside_navigation')
@@ -51,6 +53,7 @@
                             <span class="font-medium">Attention !</span> {!! session('warning') !!}.
                         </div>
                     @endif
+
 
                     <!-- Page Content -->
                     <main>
